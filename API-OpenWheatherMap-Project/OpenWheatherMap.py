@@ -95,3 +95,31 @@ for city in data:
     with open('weather_data.json', 'w') as f:
         json.dump(data, f, indent=2, default=str)
 
+# Flatten the nested data using pandas 
+with open('weather_data.json', 'r') as f:
+    json_data = json.load(f)
+
+def transform_weather_data():
+    rows = []
+
+    for city, weather_data in json_data.items():
+        row = {
+            'id': weather_data['id'],
+            'city': city,
+            'weather_id': weather_data['weather'][0]['id'],
+            'weather_condition': weather_data['weather'][0]['main'],
+            'description': weather_data['weather'][0]['description'],
+            'temperature': weather_data['main']['temp'],
+            'pressure': weather_data['main']['pressure'],
+            'humidity': weather_data['main']['humidity'],
+            'sea_level': weather_data['main']['sea_level'],
+            'wind_speed': weather_data['wind']['speed']
+        }
+        rows.append(row)
+        print(f"Succesfully loaded {city} weather data")
+
+    return rows
+
+df = pd.DataFrame(transform_weather_data())
+
+print(df)
